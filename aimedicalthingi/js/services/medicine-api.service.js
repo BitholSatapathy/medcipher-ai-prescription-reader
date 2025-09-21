@@ -1,7 +1,13 @@
 import { BaseApiService } from './base-api.service.js';
+import { Config } from '../config.js';
 
 export class MedicineApiService extends BaseApiService {
-    constructor(baseUrl = 'http://127.0.0.1:5000') {
+    constructor(baseUrl) {
+        // Initialize configuration if baseUrl is not provided
+        if (!baseUrl) {
+            const config = new Config();
+            baseUrl = config.get('MEDICINE_API_URL');
+        }
         super(baseUrl);
     }
 

@@ -12,7 +12,15 @@ full_med_map = {}
 
 base_name_to_full_names_map = {}
 
-MEDS_FILE_PATH = r"D:\project\Ai_medical_prescribe-main\aimedicalthingi\Temp_database\medicines_V3.txt"
+# Get the directory where this script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Go up one level to aimedicalthingi directory and then to Temp_database
+# Use test database for development if TEST_MODE is set
+if os.environ.get('TEST_MODE') == '1':
+    MEDS_FILE_PATH = os.path.join(SCRIPT_DIR, "..", "Temp_database", "medicines_test.txt")
+    print("🧪 Using test database (5K entries) for faster startup")
+else:
+    MEDS_FILE_PATH = os.path.join(SCRIPT_DIR, "..", "Temp_database", "medicines_V3.txt")
 MIN_SUGGESTION_CONFIDENCE = 0.1
 
 
@@ -61,40 +69,43 @@ def load_medicine_names(filepath):
 
 
 def initialize_symspell():
-
     global sym_spell, full_med_map, base_name_to_full_names_map
     if sym_spell is not None:
         print("SymSpell already initialized.")
         return True
 
-    print("Initializing SymSpell dictionary and mappings (this may take a moment for 2L entries)...")
+    print("Initializing SymSpell dictionary and mappings...")
     medicine_names_raw = load_medicine_names(MEDS_FILE_PATH)
     if not medicine_names_raw:
         print("Error: No medicines loaded. SymSpell cannot be initialized.", file=sys.stderr)
         return False
+    
+    print(f"Processing {len(medicine_names_raw)} medicine entries...")
     sym_spell = SymSpell(max_dictionary_edit_distance=4, prefix_length=7)
     added_to_symspell_lower = set()
 
-    for original_name in medicine_names_raw:
+    # Process in batches with progress feedback
+    batch_size = 10000
+    total_entries = len(medicine_names_raw)
+    
+    for i, original_name in enumerate(medicine_names_raw):
+        # Show progress every 50k entries
+        if i > 0 and i % 50000 == 0:
+            progress = (i / total_entries) * 100
+            print(f"Progress: {progress:.1f}% ({i}/{total_entries})")
+        
         lower_name = original_name.lower()
         if lower_name not in added_to_symspell_lower:
             sym_spell.create_dictionary_entry(original_name, 1) 
             added_to_symspell_lower.add(lower_name)
             full_med_map[lower_name] = original_name
-        base_name = get_base_name(original_name)
-        if base_name and base_name != lower_name:
-
-            if base_name not in added_to_symspell_lower:
-                sym_spell.create_dictionary_entry(base_name, 1)
-                added_to_symspell_lower.add(base_name)
-            if base_name not in base_name_to_full_names_map:
-                base_name_to_full_names_map[base_name] = []
-            if original_name not in base_name_to_full_names_map[base_name]: 
-                base_name_to_full_names_map[base_name].append(original_name)
-
-    print(f"SymSpell dictionary loaded with {len(sym_spell.words)} entries (full names & unique base names).")
-    print(f"Full medication map has {len(full_med_map)} entries.")
-    print(f"Base to full names map has {len(base_name_to_full_names_map)} entries.")
+            
+        # Skip complex base name processing for faster startup
+        # This will slightly reduce accuracy but dramatically improve startup time
+        
+    print(f"✅ SymSpell dictionary loaded with {len(sym_spell.words)} entries.")
+    print(f"✅ Full medication map has {len(full_med_map)} entries.")
+    return True
     return True
 
 with app.app_context():

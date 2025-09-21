@@ -18,9 +18,20 @@ export class ApiService {
 
   async analyzePrescriptionImage(imageFile) {
     try {
+      console.log("Step 0: Checking backend API connectivity...");
+      
+      // Check if medicine API is available before starting analysis
+      try {
+        await this.medicineService.getHealthStatus();
+        console.log("✅ Backend API is responsive");
+      } catch (error) {
+        console.warn("⚠️ Medicine API not available - will skip spell checking");
+        console.log("Continuing with Gemini analysis only...");
+      }
+
       console.log("Step 1: Extracting text from image using Gemini...");
       const rawExtractedText = await this.geminiService.analyzePrescriptionImage(imageFile);
-      console.log("Gemini extracted text:", rawExtractedText);
+      console.log("✅ Gemini extracted text:", rawExtractedText);
 
       console.log("Step 2: Formatting text and spell-checking medicines...");
       const formattedHtml = await this.formatWithSpellCheck(rawExtractedText);

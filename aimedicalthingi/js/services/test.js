@@ -1,4 +1,5 @@
 import { MedicineApiService } from './medicine-api.service.js';
+import { Config } from '../config.js';
 
 const medicineApi = new MedicineApiService();
 
@@ -51,7 +52,8 @@ async function runTests() {
 
     console.log("\n Health Check Test");
     try {
-        const healthResponse = await fetch('http://127.0.0.1:5000/health');
+        const config = new Config();
+        const healthResponse = await fetch(`${config.get('MEDICINE_API_URL')}/health`);
         const healthData = await healthResponse.json();
         console.log("Health Check Status:", healthData);
     } catch (error) {

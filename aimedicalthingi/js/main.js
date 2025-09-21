@@ -7,9 +7,14 @@ import {
   setPrescriptionDetails,
 } from "./dom-elements.js";
 import { ApiService } from "./services/api.service.js";
+import { Config } from "./config.js";
 
-const GEMINI_API_KEY = "AIzaSyA3F0kFruG8GDlVv18l23rl6WQCo71gUoI";
-const MEDICINE_API_URL = "http://127.0.0.1:5000";
+// Initialize configuration
+const config = new Config();
+
+// Get configuration values
+const GEMINI_API_KEY = "AIzaSyA3F0kFruG8GDlVv18l23rl6WQCo71gUoI"; // Keep exposed as requested
+const MEDICINE_API_URL = config.get('MEDICINE_API_URL');
 
 // Instance of ApiService
 const apiService = new ApiService(GEMINI_API_KEY, MEDICINE_API_URL);
@@ -81,18 +86,25 @@ async function handleImageUpload(event) {
     return;
   }
 
-  setPrescriptionDetails("<p>Processing your prescription...</p>");
+  setPrescriptionDetails(`
+    <div style="text-align: center; padding: 2rem;">
+      <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <p style="margin-top: 1rem;">🔍 Analyzing prescription with AI...</p>
+      <p style="margin-top: 0.5rem; font-size: 0.9em; color: #666;">This may take up to 2 minutes for the first analysis</p>
+    </div>
+  `);
   openModal();
 
   try {
-    // Complete pipeline in ApiService:
-    // 1. Image → Gemini API (text extraction)
-    // 2. Raw text → Formatter (initial formatting)
-    // 3. Extract medicine names
-    // 4. Medicine API (spell checking)
-    // 5. Replace corrected names
-    // 6. Final formatting → HTML
-    const finalFormattedHtml = await apiService.analyzePrescriptionImage(file);
+    // Add timeout wrapper for the entire analysis
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Analysis timeout - please try again')), 180000); // 3 minutes
+    });
+
+    // Complete pipeline in ApiService with timeout protection
+    const analysisPromise = apiService.analyzePrescriptionImage(file);
+    
+    const finalFormattedHtml = await Promise.race([analysisPromise, timeoutPromise]);
     setPrescriptionDetails(finalFormattedHtml);
 
     console.log("Prescription processing pipeline completed successfully");

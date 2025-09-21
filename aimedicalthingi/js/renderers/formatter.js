@@ -4,9 +4,13 @@ import { GeminiApiService } from '../services/gemini-api.service.js';
 import { MedicineApiService } from '../services/medicine-api.service.js';
 import { TextCleaner } from '../utils/text-cleaner.js';
 import { HtmlRenderer } from './html-renderer.js';
+import { Config } from '../config.js';
 
-const GEMINI_API_KEY = "AIzaSyA3F0kFruG8GDlVv18l23rl6WQCo71gUoI";
-const MEDICINE_API_URL = "http://127.0.0.1:5000";
+// Initialize configuration
+const config = new Config();
+
+const GEMINI_API_KEY = "AIzaSyA3F0kFruG8GDlVv18l23rl6WQCo71gUoI"; // Keep exposed as requested
+const MEDICINE_API_URL = config.get('MEDICINE_API_URL');
 
 export class PrescriptionParser {
     constructor(patientInfoParser, medicationParser, otherNotesParser) {
