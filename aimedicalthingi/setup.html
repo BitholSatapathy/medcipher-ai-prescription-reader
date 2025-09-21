@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCipher - Setup</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .setup-form { background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .input-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>MedCipher Configuration Setup</h1>
+    
+    <div class="warning">
+        <h3>⚠️ Important Security Notice</h3>
+        <p>Never commit API keys to your repository. This setup is for development purposes only.</p>
+    </div>
+
+    <div class="setup-form">
+        <h3>Configure API Settings</h3>
+        <div class="input-group">
+            <label for="apiKey">Gemini API Key:</label>
+            <input type="text" id="apiKey" placeholder="Enter your Gemini API key">
+            <small>Get your API key from <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a></small>
+        </div>
+        
+        <div class="input-group">
+            <label for="medicineApiUrl">Medicine API URL:</label>
+            <input type="text" id="medicineApiUrl" value="http://127.0.0.1:5000" placeholder="Enter medicine API URL">
+        </div>
+        
+        <button onclick="saveConfiguration()">Save Configuration</button>
+        <button onclick="goToApp()">Go to MedCipher</button>
+    </div>
+
+    <div id="status"></div>
+
+    <script>
+        function saveConfiguration() {
+            const apiKey = document.getElementById('apiKey').value;
+            const medicineApiUrl = document.getElementById('medicineApiUrl').value;
+            
+            if (!apiKey) {
+                showStatus('Please enter a Gemini API key', 'error');
+                return;
+            }
+            
+            // Store in sessionStorage for this session
+            window.ENV = {
+                GEMINI_API_KEY: apiKey,
+                MEDICINE_API_URL: medicineApiUrl
+            };
+            
+            // Also store in localStorage for persistence (development only)
+            localStorage.setItem('MEDCIPHER_CONFIG', JSON.stringify(window.ENV));
+            
+            showStatus('Configuration saved successfully!', 'success');
+        }
+        
+        function goToApp() {
+            // Load saved configuration
+            const saved = localStorage.getItem('MEDCIPHER_CONFIG');
+            if (saved) {
+                window.ENV = JSON.parse(saved);
+            }
+            
+            if (!window.ENV || !window.ENV.GEMINI_API_KEY) {
+                showStatus('Please configure your API key first', 'error');
+                return;
+            }
+            
+            window.location.href = 'index.html';
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="${type === 'success' ? 'success' : 'warning'}">${message}</div>`;
+        }
+        
+        // Load existing configuration
+        window.onload = function() {
+            const saved = localStorage.getItem('MEDCIPHER_CONFIG');
+            if (saved) {
+                const config = JSON.parse(saved);
+                document.getElementById('apiKey').value = config.GEMINI_API_KEY || '';
+                document.getElementById('medicineApiUrl').value = config.MEDICINE_API_URL || 'http://127.0.0.1:5000';
+            }
+        };
+    </script>
+</body>
+</html>

@@ -8,6 +8,8 @@ import {
 } from "./dom-elements.js";
 import { ApiService } from "./services/api.service.js";
 
+import { HtmlRenderer } from "./renderers/html-renderer.js";
+
 const GEMINI_API_KEY = "AIzaSyA3F0kFruG8GDlVv18l23rl6WQCo71gUoI";
 const MEDICINE_API_URL = "http://127.0.0.1:5000";
 
