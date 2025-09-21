@@ -1,0 +1,10 @@
+{
+  "name": "ai-medical-prescribe",
+  "version": "1.0.0",
+  "description": "AI Medical Prescription Analysis App",
+  "scripts": {
+    "dev": "python -m http.server 3000",
+    "build": "echo 'Static site - no build needed'"
+  },
+  "type": "module"
+}

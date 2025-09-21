@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MedCipher - AI Prescription Reader</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="module" src="js/custom-integration.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body class="dark">
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="modal">
+        <div class="modal-content">
+            <div style="text-align: center; padding: 2rem;">
+                <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <p style="margin-top: 1rem;">Processing Prescription... Please Wait.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Modal -->
+    <div id="prescriptionModal" class="modal">
+        <div class="modal-content prescription-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">📋 Prescription Analysis Results</h2>
+                <span class="close-button" id="modalCloseSpan">×</span>
+            </div>
+            <div class="modal-body">
+                <div id="prescriptionDetails" class="prescription-content">
+                    <div class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <p>Upload and analyze a prescription to see detailed results here</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="file" id="prescriptionUploadModal" class="hidden" accept="image/*">
+                <div class="modal-buttons">
+                    <button id="downloadPdfButton" class="btn pdf-btn" style="display: none;">
+                        📄 Download PDF Report
+                    </button>
+                    <button id="modalCloseButton" class="btn secondary">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="nav-inner">
+        <a href="#try" class="logo">MedCipher</a>
+        <div class="nav-right">
+          <nav class="nav-links">
+            <a href="#features" class="btn">Features</a>
+            <a href="#faq" class="btn">FAQs</a>
+            <a href="#try" class="btn">Try Now</a>
+            <a href="#team" class="btn">Team</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <h2>AI That Reads the Unreadable</h2>
+      <p>
+        Upload a handwritten or printed prescription and let our AI tool extract
+        medicines, dosages, and instructions — safe, fast, and private.
+      </p>
+      <div style="margin-top: 2.5em"></div>
+      <a href="#try" class="btn large">Get Started</a>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+      <h3 class="section-title">Key Features</h3>
+      <div class="grid">
+        <div class="card">
+          <h4>Smart Image Analysis</h4>
+          <p>
+            Supports JPG, PNG, and WEBP images with OCR tuned for medical
+            handwriting.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Drug & Dosage Extraction</h4>
+          <p>
+            AI detects medicine names, milligrams, frequencies, and quantities.
+          </p>
+        </div>
+        <div class="card">
+          <h4>AI Interpretation</h4>
+          <p>
+            Converts medical abbreviations like <i>b.i.d.</i> into plain
+            instructions.
+          </p>
+        </div>
+        <div class="card">
+          <h4>Copy & Share</h4>
+          <p>Quickly copy results to clipboard or export summaries as PDF.</p>
+        </div>
+        <div class="card">
+          <h4>Secure & Private</h4>
+          <p>Everything runs in-browser. No data leaves your device.</p>
+        </div>
+        <div class="card">
+          <h4>One-Click PDF Export</h4>
+          <p>Download or print AI-generated summaries instantly.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Try It Section -->
+    <section id="try" class="try">
+      <div class="container text-center">
+        <h3 class="section-title">Try the AI Prescription Reader</h3>
+        
+        <div class="card">
+          <label for="prescriptionUploadHero" class="file-label"
+            >📂 Choose Prescription Image</label
+          >
+          <input
+            type="file"
+            id="prescriptionUploadHero"
+            accept="image/*"
+            class="hidden"
+          />
+          <input
+            type="file"
+            id="prescriptionUploadNav"
+            accept="image/*"
+            class="hidden"
+          />
+          <input
+            type="file"
+            id="prescriptionUploadCTA"
+            accept="image/*"
+            class="hidden"
+          />
+          <p id="fileName" class="file-name">No file chosen</p>
+          <button id="analyzeBtn" class="btn">
+            Analyze Prescription
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Meet the Team Section -->
+    <section id="team" class="section team-section">
+      <h3 class="section-title">Meet the Team</h3>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-img">
+            <img src="images/a.png" alt="Ansuman Samal" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+          </div>
+          <div class="team-name">Ansuman Samal</div>
+          <div class="team-role">AI/ML Engineer</div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="images/b.jpg" alt="Bithol Satapathy" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+          </div>
+          <div class="team-name">Bithol Satapathy</div>
+          <div class="team-role">Frontend Developer</div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="images/c.jpg" alt="Akshath Sharma" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+          </div>
+          <div class="team-name">Akshath Sharma</div>
+          <div class="team-role">AI/ML Engineer</div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="images/d.png" alt="Tanish Saxena" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+          </div>
+          <div class="team-name">Tanish Saxena</div>
+          <div class="team-role">Backend Engineer</div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="images/e.png" alt="Pulkit Sheoran" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+          </div>
+          <div class="team-name">Pulkit Sheoran</div>
+          <div class="team-role">DevOps Engineer</div>
+        </div>
+        <div class="team-card">
+          <div class="team-img">
+            <img src="images/f.png" alt="Aryan Sharma" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+          </div>
+          <div class="team-name">Aryan Sharma</div>
+          <div class="team-role">Infrastructure Engineer</div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section id="faq" class="section">
+      <h3 class="section-title">Frequently Asked Questions</h3>
+      <div class="faq">
+        <!-- Medical Disclaimer FAQ -->
+        <details class="card">
+          <summary>💡 How accurate is this AI tool?</summary>
+          <div class="faq-content">
+            <p><strong>Good to know:</strong> This AI prescription analysis tool is still being improved and should be used as a helpful assistant, not a replacement for medical professionals.</p>
+            <ul>
+              <li>✅ <strong>Great for:</strong> Organizing and digitizing prescription information</li>
+              <li>✅ <strong>Helpful with:</strong> Reading hard-to-read handwriting</li>
+              <li>⚠️ <strong>Please remember:</strong> Always double-check with your pharmacist or doctor</li>
+              <li>🏥 <strong>Best practice:</strong> Use this as a starting point, not the final answer</li>
+            </ul>
+            <p class="disclaimer-note">Your health is important to us - we encourage using this tool alongside professional medical guidance.</p>
+          </div>
+        </details>
+        
+        <details class="card">
+          <summary>Will this work with difficult doctor handwriting?</summary>
+          <p>
+            Yes, our AI is specifically trained to work with medical handwriting. While very poor
+            handwriting may reduce accuracy, it performs well with moderately legible prescriptions.
+          </p>
+        </details>
+        <details class="card">
+          <summary>Is this tool approved by health authorities?</summary>
+          <p>
+            This tool is for informational purposes only and does not replace professional medical
+            judgment or consultation with healthcare providers.
+          </p>
+        </details>
+        <details class="card">
+          <summary>Is my health data safe?</summary>
+          <p>Yes. All prescription analysis happens securely through our API; your data is processed safely and not stored permanently.</p>
+        </details>
+        <details class="card">
+          <summary>Do I need to register?</summary>
+          <p>No, it's completely free to use without login or registration.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">© 2025 MedCipher • For Exhibition Use</footer>
+  </body>
+</html>
+</body>
+</html>
